@@ -4,7 +4,7 @@
 for (( failures=0; failures<20; ))
 do
   # Issue the curl command with urls from script args
-  curl -k -s "$@"
+  curl -f -k -s "$@"
   # save the exit code of curl for use in comparison and exit
   rc=$?
   if [ $rc = 0 ]
