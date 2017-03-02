@@ -1,6 +1,8 @@
 #!groovy
-
 node {
+  ansiColor('xterm') {
+  timestamps {
+
   stage('Prepare') {
     checkout scm
     sh 'docker ps'
@@ -15,7 +17,11 @@ node {
     } catch (Exception e) {
       throw e;
     } finally {
+      sh 'docker-compose logs'
       sh 'docker-compose down --remove-orphans || true'
     }
+  }
+
+  }
   }
 }
