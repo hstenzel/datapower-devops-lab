@@ -8,14 +8,17 @@ services:
       - CONTINUOUS=true
   datapower:
     build: datapower
+    stdin_open: true
+    tty: true
     depends_on:
       - backend
     volumes:
       - ./datapower/config:/drouter/config
       - ./datapower/local:/drouter/local
+      - ./datapower/cert:/secret:ro
     ports:
-      - "80:80"
-      - "443:443"
+      - "9080:80"
+      - "9443:443"
       - "9090:9090"
   backend:
     image: hstenzel/nodejs-hostname-automatic

@@ -6,7 +6,11 @@ services:
       - datapower
   datapower:
     build: datapower
+    stdin_open: true
+    tty: true
     depends_on:
       - backend
+    volumes:
+      - ./datapower/cert:/secret:ro
   backend:
     image: hstenzel/nodejs-hostname-automatic

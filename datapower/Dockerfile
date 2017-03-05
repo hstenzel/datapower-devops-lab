@@ -4,4 +4,5 @@ ENV  DATAPOWER_ACCEPT_LICENSE=true \
      DATAPOWER_INTERACTIVE=true
 COPY config/ /drouter/config/
 COPY local/ /drouter/local/
+RUN  cd /root/secure/ && rm -rf usrcerts && ln -s /secret/ usrcerts
 EXPOSE 80 443 9090
