@@ -11,6 +11,16 @@ services:
     depends_on:
       - backend
     volumes:
-      - ./datapower/cert:/secret:ro
+      # Jenkins as it is run in ci-demo cannot mount a host dir
+      # So instead, use a data volume that already exists in Docker
+      - secret:/secret:ro
   backend:
     image: hstenzel/nodejs-hostname-automatic
+
+# docker run --volumes-from secret ubuntu find /secret -ls
+volumes:
+  secret:
+    # Create the data volume outside compose to stand in for key mgmt:
+    # docker volume create --name=secret
+    # docker run -v secret:/secret -v $PWD/datapower/cert:/cert ubuntu /bin/sh -c 'cp -prv /cert/* /secret/'
+    external: true
