@@ -3,10 +3,18 @@
 # Loop for up to 20 consecutive failures
 for (( failures=0; failures<20; ))
 do
-  # Issue the curl command with urls from script args
-  curl -f -k -s "$@"
-  # save the exit code of curl for use in comparison and exit
-  rc=$?
+  rcsum=0
+  for url in "$@"
+  do
+    # Issue the curl command with urls from script args
+    echo "vvvv curl $url vvvv"
+    curl -f -k -s "$url"
+    # save the exit code of curl for use in comparison and exit
+    rc=$?
+    rcsum=$((rcsum + rc))
+    echo "^^^^ curl $url ^^^^ rc=$rc"
+  done
+
   if [ $rc = 0 ]
   then
     failures=0
