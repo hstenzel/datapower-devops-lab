@@ -1,4 +1,4 @@
-version: '3'
+version: '3.1'
 services:
   client:
     build: client
@@ -15,10 +15,25 @@ services:
     volumes:
       - ./datapower/config:/drouter/config
       - ./datapower/local:/drouter/local
-      - ./datapower/cert:/secret:ro
+    secrets:
+      - webgui_cert
+      - webgui_key
+      - server_cert
+      - server_key
     ports:
       - "9080:80"
       - "9443:443"
       - "9090:9090"
   backend:
     image: hstenzel/nodejs-hostname-automatic
+
+secrets:
+  webgui_cert:
+    file: ./datapower/cert/webgui-sscert.pem
+  webgui_key:
+    file: ./datapower/cert/webgui-privkey.pem
+  server_cert:
+    file: ./datapower/cert/foo/server.crt
+  server_key:
+    file: ./datapower/cert/foo/server.key
+
