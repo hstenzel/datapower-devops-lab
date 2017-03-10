@@ -1,29 +1,29 @@
-version: '3.1'
+version: '3'
 services:
   client:
+    image: hstenzel/lab-client
     build: client
     depends_on:
       - datapower
   datapower:
+    image: hstenzel/lab-datapower
     build: datapower
     stdin_open: true
     tty: true
     depends_on:
       - backend
-    secrets:
-      - webgui_cert
-      - webgui_key
-      - server_cert
-      - server_key
+    volumes:
+      # Jenkins as it is run in ci-demo cannot mount a host dir and it can't use file secrets.
+      # Additionally, docker-compose does not permit external secrets, one must use docker stack for that.
+      # So instead, use a data volume that already exists in Docker but use the same layout as secrets
+      - secrets:/run/secrets:ro
   backend:
     image: hstenzel/nodejs-hostname-automatic
 
-secrets:
-  webgui_cert:
-    file: ./datapower/cert/webgui-sscert.pem
-  webgui_key:
-    file: ./datapower/cert/webgui-privkey.pem
-  server_cert:
-    file: ./datapower/cert/foo/server.crt
-  server_key:
-    file: ./datapower/cert/foo/server.key
+# docker run --volumes-from secret ubuntu find /secret -ls
+volumes:
+  secrets:
+    # Create the data volume outside compose to stand in for key mgmt:
+    # docker volume create --name=secrets
+    # docker run -v secrets:/run/secrets -v $PWD/datapower/cert:/cert ubuntu /bin/sh -c 'mkdir -p /run/secrets && cp /cert/webgui-sscert.pem /run/secrets/webgui_cert && cp /cert/webgui-privkey.pem /run/secrets/webgui_key && cp /cert/foo/server.crt /run/secrets/server_cert && cp /cert/foo/server.key /run/secrets/server_key'
+    external: true
